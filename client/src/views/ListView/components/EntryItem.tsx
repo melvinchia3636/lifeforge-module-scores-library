@@ -2,7 +2,7 @@ import type { ScoreLibraryEntry } from '@'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { Card, Flex, Icon, Text } from '@lifeforge/ui'
+import { Card, Flex, Icon, Image, Text } from '@lifeforge/ui'
 
 import { useEntryDrag } from '@/hooks/useEntryDrag'
 import { forgeAPI } from '@/manifest'
@@ -44,21 +44,15 @@ function EntryItem({ entry }: { entry: ScoreLibraryEntry }) {
       target="_blank"
       width="100%"
     >
-      <Flex
-        centered
+      <Image
+        alt=""
         bg={{ base: 'bg-200', dark: 'bg-800' }}
+        fallback="tabler:file-music"
+        fit="contain"
         r="sm"
-        style={{ width: '4rem', overflow: 'hidden' }}
-      >
-        <img
-          alt=""
-          src={forgeAPI.getMedia({
-            key: entry.thumbnail,
-            thumb: '0x512'
-          })}
-          style={{ height: '100%' }}
-        />
-      </Flex>
+        src={forgeAPI.getMedia({ key: entry.thumbnail, thumb: '0x512' })}
+        width="4rem"
+      />
       <Flex direction="column" flex="1" minWidth="0" width="100%">
         {type && (
           <Flex align="center" gap="xs" mb="xs">

@@ -2,7 +2,7 @@ import type { ScoreLibraryEntry } from '@'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { Box, Card, Flex, Icon, Text, colorWithOpacity } from '@lifeforge/ui'
+import { Box, Card, Flex, Icon, Image, Text, colorWithOpacity } from '@lifeforge/ui'
 
 import { useEntryDrag } from '@/hooks/useEntryDrag'
 import { forgeAPI } from '@/manifest'
@@ -40,47 +40,19 @@ function EntryItem({ entry }: { entry: ScoreLibraryEntry }) {
       target="_blank"
     >
       <Box position="relative">
-        <Flex
-          centered
+        <Image
+          key={entry.id}
+          alt=""
           aspectRatio="1 / 1.4142"
           bg={{ base: 'bg-100', dark: 'bg-800' }}
+          fallback="tabler:file-music"
+          fit="cover"
+          objectPosition="top"
           overflow="hidden"
-          position="relative"
           r="md"
+          src={forgeAPI.getMedia({ key: entry.thumbnail, thumb: '0x512' })}
           width="100%"
-        >
-          <Box
-            asChild
-            left="50%"
-            position="absolute"
-            style={{ transform: 'translate(-50%, -50%)' }}
-            top="50%"
-          >
-            <Icon
-              color={{ base: 'bg-300', dark: 'bg-700' }}
-              icon="tabler:file-music"
-              size="4em"
-            />
-          </Box>
-          <Box
-            asChild
-            height="100%"
-            position="relative"
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'top'
-            }}
-          >
-            <img
-              key={entry.id}
-              alt=""
-              src={forgeAPI.getMedia({
-                key: entry.thumbnail,
-                thumb: '0x512'
-              })}
-            />
-          </Box>
-        </Flex>
+        />
         <Box
           bg={colorWithOpacity('bg-500', '80%')}
           bottom="0"
