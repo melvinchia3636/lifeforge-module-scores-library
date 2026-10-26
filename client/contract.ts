@@ -1,1195 +1,402 @@
-export const contract = {
-  "entries": {
-    "cleanup": {
-      "method": "post",
-      "description": "Extract score name and author from raw string using AI",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "rawName": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "rawName"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "author"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "list": {
-      "method": "get",
-      "description": "Get scores with filters and pagination",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "page": {
-              "default": "1",
-              "type": "string"
-            },
-            "query": {
-              "type": "string"
-            },
-            "category": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            },
-            "collection": {
-              "type": "string"
-            },
-            "starred": {
-              "type": "string"
-            },
-            "sort": {
-              "default": "newest",
-              "type": "string",
-              "enum": [
-                "name",
-                "author",
-                "newest",
-                "oldest"
-              ]
-            }
-          },
-          "required": [
-            "page",
-            "sort"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "items": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "page_count": {
-                    "type": "string"
-                  },
-                  "thumbnail": {
-                    "type": "string"
-                  },
-                  "author": {
-                    "type": "string"
-                  },
-                  "pdf": {
-                    "type": "string"
-                  },
-                  "audio": {
-                    "type": "string"
-                  },
-                  "musescore": {
-                    "type": "string"
-                  },
-                  "is_favourite": {
-                    "type": "boolean"
-                  },
-                  "collection": {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "guitar_world_id": {
-                    "anyOf": [
-                      {
-                        "type": "integer",
-                        "minimum": -2147483648,
-                        "maximum": 2147483647
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "created": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name",
-                  "type",
-                  "page_count",
-                  "thumbnail",
-                  "author",
-                  "pdf",
-                  "audio",
-                  "musescore",
-                  "is_favourite",
-                  "collection",
-                  "guitar_world_id",
-                  "created",
-                  "updated"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "page": {
-              "type": "number"
-            },
-            "perPage": {
-              "type": "number"
-            },
-            "totalItems": {
-              "type": "number"
-            },
-            "totalPages": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "items",
-            "page",
-            "perPage",
-            "totalItems",
-            "totalPages"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "random": {
-      "method": "get",
-      "description": "Get a random score",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {},
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "page_count": {
-              "type": "string"
-            },
-            "thumbnail": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            },
-            "pdf": {
-              "type": "string"
-            },
-            "audio": {
-              "type": "string"
-            },
-            "musescore": {
-              "type": "string"
-            },
-            "is_favourite": {
-              "type": "boolean"
-            },
-            "collection": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "guitar_world_id": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "minimum": -2147483648,
-                  "maximum": 2147483647
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "created": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "updated": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          "required": [
-            "id",
-            "name",
-            "type",
-            "page_count",
-            "thumbnail",
-            "author",
-            "pdf",
-            "audio",
-            "musescore",
-            "is_favourite",
-            "collection",
-            "guitar_world_id",
-            "created",
-            "updated"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "remove": {
-      "method": "post",
-      "description": "Delete a score",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "NO_CONTENT": true
-      }
-    },
-    "sidebarData": {
-      "method": "get",
-      "description": "Get sidebar statistics and filters",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {},
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "total": {
-              "type": "number"
-            },
-            "favourites": {
-              "type": "number"
-            },
-            "types": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "icon": {
-                    "type": "string"
-                  },
-                  "amount": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name",
-                  "icon",
-                  "amount"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "authors": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "number"
-              }
-            }
-          },
-          "required": [
-            "total",
-            "favourites",
-            "types",
-            "authors"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "toggleFavourite": {
-      "method": "post",
-      "description": "Toggle favourite status",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "page_count": {
-              "type": "string"
-            },
-            "thumbnail": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            },
-            "pdf": {
-              "type": "string"
-            },
-            "audio": {
-              "type": "string"
-            },
-            "musescore": {
-              "type": "string"
-            },
-            "is_favourite": {
-              "type": "boolean"
-            },
-            "collection": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "guitar_world_id": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "minimum": -2147483648,
-                  "maximum": 2147483647
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "created": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "updated": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          "required": [
-            "id",
-            "name",
-            "type",
-            "page_count",
-            "thumbnail",
-            "author",
-            "pdf",
-            "audio",
-            "musescore",
-            "is_favourite",
-            "collection",
-            "guitar_world_id",
-            "created",
-            "updated"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "update": {
-      "method": "post",
-      "description": "Update score details",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        },
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            },
-            "type": {
-              "type": "string"
-            },
-            "collection": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "author"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "type": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "page_count": {
-              "type": "string"
-            },
-            "thumbnail": {
-              "type": "string"
-            },
-            "author": {
-              "type": "string"
-            },
-            "pdf": {
-              "type": "string"
-            },
-            "audio": {
-              "type": "string"
-            },
-            "musescore": {
-              "type": "string"
-            },
-            "is_favourite": {
-              "type": "boolean"
-            },
-            "collection": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "guitar_world_id": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "minimum": -2147483648,
-                  "maximum": 2147483647
-                },
-                {
-                  "type": "null"
-                }
-              ]
-            },
-            "created": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "updated": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          "required": [
-            "id",
-            "name",
-            "type",
-            "page_count",
-            "thumbnail",
-            "author",
-            "pdf",
-            "audio",
-            "musescore",
-            "is_favourite",
-            "collection",
-            "guitar_world_id",
-            "created",
-            "updated"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "upload": {
-      "method": "post",
-      "description": "Upload score files",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": {
-        "files": {
-          "optional": false,
-          "multiple": true
-        }
-      },
-      "input": {},
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "string"
-        }
-      }
-    }
-  },
-  "guitarWorld": {
-    "download": {
-      "method": "post",
-      "description": "Download tab from Guitar World",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "cookie": {
-              "type": "string"
-            },
-            "id": {
-              "type": "number"
-            },
-            "name": {
-              "type": "string"
-            },
-            "category": {
-              "type": "string"
-            },
-            "mainArtist": {
-              "type": "string"
-            },
-            "audioUrl": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "cookie",
-            "id",
-            "name",
-            "category",
-            "mainArtist",
-            "audioUrl"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "string"
-        }
-      }
-    },
-    "list": {
-      "method": "get",
-      "description": "Get tabs from Guitar World",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "cookie": {
-              "type": "string"
-            },
-            "page": {
-              "default": "1",
-              "type": "string"
-            }
-          },
-          "required": [
-            "cookie",
-            "page"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "subtitle": {
-                    "type": "string"
-                  },
-                  "category": {
-                    "type": "string"
-                  },
-                  "mainArtist": {
-                    "type": "string"
-                  },
-                  "uploader": {
-                    "type": "string"
-                  },
-                  "audioUrl": {
-                    "type": "string"
-                  },
-                  "existed": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name",
-                  "subtitle",
-                  "category",
-                  "mainArtist",
-                  "uploader",
-                  "audioUrl",
-                  "existed"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "totalItems": {
-              "type": "number"
-            },
-            "perPage": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "data",
-            "totalItems",
-            "perPage"
-          ],
-          "additionalProperties": false
-        }
-      }
-    }
-  },
-  "types": {
-    "create": {
-      "method": "post",
-      "description": "Create a new score type",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "icon": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "icon"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "CREATED": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "icon": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id",
-            "name",
-            "icon"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "list": {
-      "method": "get",
-      "description": "Get all music score types",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {},
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "icon": {
-                "type": "string"
-              },
-              "amount": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "icon",
-              "amount"
-            ],
-            "additionalProperties": false
-          }
-        }
-      }
-    },
-    "remove": {
-      "method": "post",
-      "description": "Delete a score type",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "NO_CONTENT": true
-      }
-    },
-    "update": {
-      "method": "post",
-      "description": "Update score type details",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        },
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "icon": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name",
-            "icon"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "icon": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id",
-            "name",
-            "icon"
-          ],
-          "additionalProperties": false
-        }
-      }
-    }
-  },
-  "collections": {
-    "create": {
-      "method": "post",
-      "description": "Create a new score collection",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "CREATED": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id",
-            "name"
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "list": {
-      "method": "get",
-      "description": "Get all score collections",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {},
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "amount": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "amount"
-            ],
-            "additionalProperties": false
-          }
-        }
-      }
-    },
-    "remove": {
-      "method": "post",
-      "description": "Delete a score collection",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "NO_CONTENT": true
-      }
-    },
-    "update": {
-      "method": "post",
-      "description": "Update collection details",
-      "noAuth": false,
-      "encrypted": true,
-      "isDownloadable": false,
-      "media": null,
-      "input": {
-        "query": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id"
-          ],
-          "additionalProperties": false
-        },
-        "body": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "name"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "output": {
-        "OK": {
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "name": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id",
-            "name"
-          ],
-          "additionalProperties": false
-        }
-      }
-    }
-  }
-} as const
+export type EndpointEntriesRemove_OutputNO_CONTENT = void;
+export type EndpointEntriesUpload_OutputOK = string;
+export type EndpointGuitarWorldDownload_OutputOK = string;
+export type EndpointTypesList_OutputOK = {
+  id: string;
+  name: string;
+  icon: string;
+  amount: number;
+}[];
+export type EndpointTypesRemove_OutputNO_CONTENT = void;
+export type EndpointCollectionsList_OutputOK = {
+  id: string;
+  name: string;
+  amount: number;
+}[];
+export type EndpointCollectionsRemove_OutputNO_CONTENT = void;
 
-export default contract
+export interface Contract {
+  entries: {
+    cleanup: EndpointEntriesCleanup;
+    list: EndpointEntriesList;
+    random: EndpointEntriesRandom;
+    remove: EndpointEntriesRemove;
+    sidebarData: EndpointEntriesSidebarData;
+    toggleFavourite: EndpointEntriesToggleFavourite;
+    update: EndpointEntriesUpdate;
+    upload: EndpointEntriesUpload;
+  };
+  guitarWorld: {
+    download: EndpointGuitarWorldDownload;
+    list: EndpointGuitarWorldList;
+  };
+  types: {
+    create: EndpointTypesCreate;
+    list: EndpointTypesList;
+    remove: EndpointTypesRemove;
+    update: EndpointTypesUpdate;
+  };
+  collections: {
+    create: EndpointCollectionsCreate;
+    list: EndpointCollectionsList;
+    remove: EndpointCollectionsRemove;
+    update: EndpointCollectionsUpdate;
+  };
+}
+export interface EndpointEntriesCleanup {
+  method: "post";
+  input: {
+    body?: EndpointEntriesCleanup_InputBody;
+  };
+  output: {
+    OK: EndpointEntriesCleanup_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesCleanup_InputBody {
+  rawName: string;
+}
+export interface EndpointEntriesCleanup_OutputOK {
+  name: string;
+  author: string;
+}
+export interface EndpointEntriesList {
+  method: "get";
+  input: {
+    query?: EndpointEntriesList_InputQuery;
+  };
+  output: {
+    OK: EndpointEntriesList_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesList_InputQuery {
+  page: string;
+  query?: string;
+  category?: string;
+  author?: string;
+  collection?: string;
+  starred?: string;
+  sort: "name" | "author" | "newest" | "oldest";
+}
+export interface EndpointEntriesList_OutputOK {
+  items: {
+    id: string;
+    name: string;
+    type: string | null;
+    page_count: string;
+    thumbnail: string;
+    author: string;
+    pdf: string;
+    audio: string;
+    musescore: string;
+    is_favourite: boolean;
+    collection: string | null;
+    guitar_world_id: number | null;
+    created: string;
+    updated: string;
+  }[];
+  page: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+export interface EndpointEntriesRandom {
+  method: "get";
+  input: {};
+  output: {
+    OK: EndpointEntriesRandom_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesRandom_OutputOK {
+  id: string;
+  name: string;
+  type: string | null;
+  page_count: string;
+  thumbnail: string;
+  author: string;
+  pdf: string;
+  audio: string;
+  musescore: string;
+  is_favourite: boolean;
+  collection: string | null;
+  guitar_world_id: number | null;
+  created: string;
+  updated: string;
+}
+export interface EndpointEntriesRemove {
+  method: "post";
+  input: {
+    query?: EndpointEntriesRemove_InputQuery;
+  };
+  output: {
+    NO_CONTENT: EndpointEntriesRemove_OutputNO_CONTENT;
+  };
+  media: null;
+}
+export interface EndpointEntriesRemove_InputQuery {
+  id: string;
+}
+export interface EndpointEntriesSidebarData {
+  method: "get";
+  input: {};
+  output: {
+    OK: EndpointEntriesSidebarData_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesSidebarData_OutputOK {
+  total: number;
+  favourites: number;
+  types: {
+    id: string;
+    name: string;
+    icon: string;
+    amount: number;
+  }[];
+  authors: {
+    [k: string]: number;
+  };
+}
+export interface EndpointEntriesToggleFavourite {
+  method: "post";
+  input: {
+    query?: EndpointEntriesToggleFavourite_InputQuery;
+  };
+  output: {
+    OK: EndpointEntriesToggleFavourite_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesToggleFavourite_InputQuery {
+  id: string;
+}
+export interface EndpointEntriesToggleFavourite_OutputOK {
+  id: string;
+  name: string;
+  type: string | null;
+  page_count: string;
+  thumbnail: string;
+  author: string;
+  pdf: string;
+  audio: string;
+  musescore: string;
+  is_favourite: boolean;
+  collection: string | null;
+  guitar_world_id: number | null;
+  created: string;
+  updated: string;
+}
+export interface EndpointEntriesUpdate {
+  method: "post";
+  input: {
+    query?: EndpointEntriesUpdate_InputQuery;
+    body?: EndpointEntriesUpdate_InputBody;
+  };
+  output: {
+    OK: EndpointEntriesUpdate_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointEntriesUpdate_InputQuery {
+  id: string;
+}
+export interface EndpointEntriesUpdate_InputBody {
+  name: string;
+  author: string;
+  type?: string;
+  collection?: string;
+}
+export interface EndpointEntriesUpdate_OutputOK {
+  id: string;
+  name: string;
+  type: string | null;
+  page_count: string;
+  thumbnail: string;
+  author: string;
+  pdf: string;
+  audio: string;
+  musescore: string;
+  is_favourite: boolean;
+  collection: string | null;
+  guitar_world_id: number | null;
+  created: string;
+  updated: string;
+}
+export interface EndpointEntriesUpload {
+  method: "post";
+  input: {};
+  output: {
+    OK: EndpointEntriesUpload_OutputOK;
+  };
+  media: {files: {optional: false; multiple: true}};
+}
+export interface EndpointGuitarWorldDownload {
+  method: "post";
+  input: {
+    body?: EndpointGuitarWorldDownload_InputBody;
+  };
+  output: {
+    OK: EndpointGuitarWorldDownload_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointGuitarWorldDownload_InputBody {
+  cookie: string;
+  id: number;
+  name: string;
+  category: string;
+  mainArtist: string;
+  audioUrl: string;
+}
+export interface EndpointGuitarWorldList {
+  method: "get";
+  input: {
+    query?: EndpointGuitarWorldList_InputQuery;
+  };
+  output: {
+    OK: EndpointGuitarWorldList_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointGuitarWorldList_InputQuery {
+  cookie: string;
+  page: string;
+}
+export interface EndpointGuitarWorldList_OutputOK {
+  data: {
+    id: number;
+    name: string;
+    subtitle: string;
+    category: string;
+    mainArtist: string;
+    uploader: string;
+    audioUrl: string;
+    existed: boolean;
+  }[];
+  totalItems: number;
+  perPage: number;
+}
+export interface EndpointTypesCreate {
+  method: "post";
+  input: {
+    body?: EndpointTypesCreate_InputBody;
+  };
+  output: {
+    CREATED: EndpointTypesCreate_OutputCREATED;
+  };
+  media: null;
+}
+export interface EndpointTypesCreate_InputBody {
+  name: string;
+  icon: string;
+}
+export interface EndpointTypesCreate_OutputCREATED {
+  id: string;
+  name: string;
+  icon: string;
+}
+export interface EndpointTypesList {
+  method: "get";
+  input: {};
+  output: {
+    OK: EndpointTypesList_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointTypesRemove {
+  method: "post";
+  input: {
+    query?: EndpointTypesRemove_InputQuery;
+  };
+  output: {
+    NO_CONTENT: EndpointTypesRemove_OutputNO_CONTENT;
+  };
+  media: null;
+}
+export interface EndpointTypesRemove_InputQuery {
+  id: string;
+}
+export interface EndpointTypesUpdate {
+  method: "post";
+  input: {
+    query?: EndpointTypesUpdate_InputQuery;
+    body?: EndpointTypesUpdate_InputBody;
+  };
+  output: {
+    OK: EndpointTypesUpdate_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointTypesUpdate_InputQuery {
+  id: string;
+}
+export interface EndpointTypesUpdate_InputBody {
+  name: string;
+  icon: string;
+}
+export interface EndpointTypesUpdate_OutputOK {
+  id: string;
+  name: string;
+  icon: string;
+}
+export interface EndpointCollectionsCreate {
+  method: "post";
+  input: {
+    body?: EndpointCollectionsCreate_InputBody;
+  };
+  output: {
+    CREATED: EndpointCollectionsCreate_OutputCREATED;
+  };
+  media: null;
+}
+export interface EndpointCollectionsCreate_InputBody {
+  name: string;
+}
+export interface EndpointCollectionsCreate_OutputCREATED {
+  id: string;
+  name: string;
+}
+export interface EndpointCollectionsList {
+  method: "get";
+  input: {};
+  output: {
+    OK: EndpointCollectionsList_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointCollectionsRemove {
+  method: "post";
+  input: {
+    query?: EndpointCollectionsRemove_InputQuery;
+  };
+  output: {
+    NO_CONTENT: EndpointCollectionsRemove_OutputNO_CONTENT;
+  };
+  media: null;
+}
+export interface EndpointCollectionsRemove_InputQuery {
+  id: string;
+}
+export interface EndpointCollectionsUpdate {
+  method: "post";
+  input: {
+    query?: EndpointCollectionsUpdate_InputQuery;
+    body?: EndpointCollectionsUpdate_InputBody;
+  };
+  output: {
+    OK: EndpointCollectionsUpdate_OutputOK;
+  };
+  media: null;
+}
+export interface EndpointCollectionsUpdate_InputQuery {
+  id: string;
+}
+export interface EndpointCollectionsUpdate_InputBody {
+  name: string;
+}
+export interface EndpointCollectionsUpdate_OutputOK {
+  id: string;
+  name: string;
+}
