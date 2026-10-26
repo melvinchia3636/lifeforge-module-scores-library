@@ -1,5 +1,12 @@
 import { useModuleTranslation } from '@lifeforge/localization'
-import { Flex, Icon, Listbox, ListboxOption, Text } from '@lifeforge/ui'
+import {
+  Flex,
+  Icon,
+  Listbox,
+  ListboxOption,
+  Text,
+  surface
+} from '@lifeforge/ui'
 
 import useFilter from '@/hooks/useFilter'
 
@@ -16,6 +23,7 @@ function SortBySelector() {
 
   return (
     <Listbox
+      bg={surface.defaultInteractive}
       minWidth="14em"
       renderContent={() => (
         <Flex align="center" gap="sm" minWidth="0">

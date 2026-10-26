@@ -84,7 +84,7 @@ function ScoresLibrary() {
             <InnerHeader totalItemsCount={entriesQuery.data?.totalItems ?? 0} />
             <WithQuery query={entriesQuery}>
               {entries => (
-                <Box asChild mt="lg">
+                <Box asChild minHeight="0" mt="lg">
                   <Scrollbar>
                     <Stack gap="md">
                       <Pagination

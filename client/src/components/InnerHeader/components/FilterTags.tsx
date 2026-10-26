@@ -7,13 +7,7 @@ import { forgeAPI } from '@/manifest'
 import useFilter from '../../../hooks/useFilter'
 
 function FilterTags() {
-  const {
-    category,
-    author,
-    collection,
-    updateFilter
-  } = useFilter()
-
+  const { category, author, collection, updateFilter } = useFilter()
   const sidebarDataQuery = useQuery(forgeAPI.entries.sidebarData.queryOptions())
   const typesQuery = useQuery(forgeAPI.types.list.queryOptions())
   const collectionsQuery = useQuery(forgeAPI.collections.list.queryOptions())
