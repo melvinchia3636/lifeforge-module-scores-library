@@ -215,7 +215,7 @@ export const download = forge
 
             const { width, height } = await sharp(imageBuffer).metadata()
 
-            doc.addPage({ size: [width!, height!] })
+            doc.addPage({ size: [width, height] })
             doc.image(imageBuffer, 0, 0, { width, height })
           }
 
